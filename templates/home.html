@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+{% block content %}
+  <div id="category-list">
+      <ul>
+        {% for category in all_categories %}
+        <li>{{category}}</li>
+        {% endfor %}
+      </ul>
+  </div>
+{% endblock %}
