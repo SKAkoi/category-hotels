@@ -5,25 +5,15 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = 'user'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(250), nullable=False)
-    email = Column(String(250), nullable=False)
-    picture = Column(String(250))
-
 class Category(Base):
     __tablename__ = 'category'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(250), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
 
     @property
     def serialize(self):
-        """Return category data in serializeable form"""
+        """Return hotel category data in seriablizable form"""
         return {
             'name' : self.name,
             'id' : self.id,
@@ -37,22 +27,20 @@ class Hotel(Base):
     name = Column(String(250), nullable=False)
     description = Column(String(500), nullable=False)
     image = Column(String(250))
+    location = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
 
     @property
     def serialize(self):
-        """Return hotel in serializeable form"""
+        """ Return the hotel data in a serializeable format """
         return {
             'name' : self.name,
             'id' : self.id,
             'description' : self.description,
-            'image_url' : self.image,
-            'category' : self.category, 
+            'image' : self.image,
+            'category' : self.category,
         }
-
 
 engine = create_engine('sqlite:///hotels.db')
 
