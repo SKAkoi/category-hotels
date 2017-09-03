@@ -40,8 +40,9 @@ class Hotel(Base):
             'description' : self.description,
             'image' : self.image,
             'category' : self.category,
+            'location' : self.location,
         }
 
-engine = create_engine('sqlite:///hotels.db')
+engine = create_engine('sqlite:///categoryhotels.db')
 
 Base.metadata.create_all(engine)
