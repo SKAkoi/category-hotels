@@ -11,17 +11,18 @@ from flask import session as login_session
 import random, string
 
 # imports for logging in via oauth(Google)
-#from oauth2client.client import flow_from_clientsecrets
-#from oauth2.client.client import FlowExchangeError
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 from flask import make_response
 import requests
 
-#CLIENT_ID =
+CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
+APPLICATION_NAME = "Hotels App"
 
 # Connect to hotels database and create the database session
-engine = create_engine('sqlite:///categoryhotels.db')
+engine = create_engine('sqlite:///hotelswithusers.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -34,7 +35,7 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                 for x in xrange(32))
     login_session['state'] = state
-    return render_template('login.html', STATE=state)
+    return render_template('header.html', STATE=state)
 
 
 # Authenticate via the user's Google account
@@ -56,7 +57,7 @@ def glogin():
     except FlowExchangeError:
         response = make_response(
                         json.dumps('Failed to upgrade the authorization code.'),
-                        401))
+                        401)
         response.headers['Content-Type'] = 'application/json'
         return response
 
