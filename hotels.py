@@ -4,24 +4,24 @@ app = Flask(__name__)
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
-from database_setup import Base, Hotel, Category, User
+from database_setup import Base, Hotel, Category
 
 # imports to create anti-forgery token
 from flask import session as login_session
 import random, string
 
 # imports for logging in via oauth(Google)
-from oauth2client.client import flow_from_clientsecrets
-from oauth2.client.client import FlowExchangeError
+#from oauth2client.client import flow_from_clientsecrets
+#from oauth2.client.client import FlowExchangeError
 import httplib2
 import json
 from flask import make_response
 import requests
 
-CLIENT_ID =
+#CLIENT_ID =
 
 # Connect to hotels database and create the database session
-engine = create_engine('sqlite:///hotels.db')
+engine = create_engine('sqlite:///categoryhotels.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -36,7 +36,7 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
-
+'''
 # Authenticate via the user's Google account
 @app.route('/glogin', methods=['POST'])
 def glogin():
@@ -157,33 +157,34 @@ def getUserInfo(user_id):
     user = session.query(User).filter_by(id = user_id).one()
     return user
 
+'''
 
 # Show all hotel categories
 @app.route('/')
 @app.route('/categories')
 def showAllCategories():
-    all_categories = session.query(Category).all().order_by(asc(Category.name))
-    recent_hotels = session.query(Hotel).all().order_by(desc(Hotel.id)).limit(6)
-    return render_template('home.html')
+    all_categories = session.query(Category).all()
+    recent_hotels = session.query(Hotel).all()
+    return render_template('home.html', all_categories=all_categories, recent_hotels=recent_hotels)
 
 # Show the hotels for a given category
-@app.route('/categories/<category_name>')
-@app.route('/categories/<category_name>/hotels')
+@app.route('/categories/<category_id>')
+@app.route('/categories/<category_id>/hotels')
 def showCategoryDetails(category_id):
-    category = session.query(Category).filter_by(id = category_id).one()
-    all_hotels = session.query(Hotel).filter_by(id = category_id).all()
-    return render_template('categorydetail.html')
+    category = session.query(Category).filter_by(id=category_id).one()
+    all_hotels = session.query(Hotel).filter_by(id=category_id).all()
+    return render_template('categorydetail.html', category=category, all_hotels=all_hotels)
 
 # Show the details of a given hotel
-@app.route('/categories/<category_name>/<hotel_name>')
-def showHotelDetails(hotel_id):
+@app.route('/categories/<category_id>/<hotel_id>')
+def showHotelDetails(category_id, hotel_id):
     hotel = session.query(Hotel).filter_by(id = hotel_id).one()
     category = session.query(Category).filter_by(id = category_id).one()
-    return render_template('hotel.html')
+    return render_template('hotel.html', hotel=hotel, category=category)
 
 # Create a new category
-@app.route('/addcategory', methods=['POST'])
-@app.route('/categories/addcategory', methods=['POST'])
+@app.route('/addcategory', methods=['POST', 'GET'])
+@app.route('/categories/addcategory', methods=['POST', 'GET'])
 def addNewCategory():
     if request.method == 'POST':
         new_category = Category(name = request.form['name'])
@@ -191,12 +192,12 @@ def addNewCategory():
         session.commit()
         flash('Successfully added %s as a new category' % new_category.name)
         return redirect(url_for('showAllCategories'))
-    else:
+    elif request.method == 'GET':
         return render_template('newcategory.html')
 
 # Edit a category
-@app.route('/categories/<category_name>/edit', methods=['GET', 'POST'])
-def editCategory():
+@app.route('/categories/<category_id>/edit', methods=['GET', 'POST'])
+def editCategory(category_id):
     category_to_edit = session.query(Category).filter_by(id = category_id).one()
     if request.method == 'POST':
         if request.form['name']:
@@ -206,11 +207,11 @@ def editCategory():
             flash('Category %s successfully edited' % category_to_edit.name)
             return redirect(url_for('showAllCategories'))
     else:
-        return render_template('editcategory.html')
+        return render_template('editcategory.html', category_to_edit=category_to_edit)
 
 # Delete a category
-@app.route('/categories/<category_name>/delete', methods=['GET', 'POST'])
-def deleteCategory():
+@app.route('/categories/<category_id>/delete', methods=['GET', 'POST'])
+def deleteCategory(category_id):
     category_to_delete = session.query(Category).filter_by(id = category_id).one()
     if request.method == 'POST':
         session.delete(category_to_delete)
@@ -218,39 +219,48 @@ def deleteCategory():
         flash('Successfully deleted %s' % category_to_delete)
         return redirect(url_for('showAllCategories'))
     else:
-        return render_template('deletecategory.html')
+        return render_template('deletecategory.html', category_to_delete=category_to_delete)
 
 # Create a new hotel
-@app.route('/categories/<category_name>/hotels/addhotel', methods=['GET', 'POST'])
+@app.route('/categories/<category_id>/hotels/addhotel', methods=['GET', 'POST'])
 def addNewHotel(category_id):
+    all_categories = session.query(Category).all()
     if request.method == 'POST':
         newHotel = Hotel(name = request.form['name'],
                         description = request.form['description'],
                         image = request.form['image_url'],
-                        category = request.form['category'],
-                        user = getUserInfo(login_session['email']))
+                        category_id = category_id,
+                        location = request.form['location'])
         session.add(newHotel)
         session.commit()
         flash('You have added %s as a new hotel' % newHotel.name)
-        return redirect(url_for('showHotelDetails'))
+        return redirect(url_for('showHotelDetails', category_id=category_id, hotel_id=newHotel.id))
     else:
-        return render_template('newhotel.html')
+        return render_template('newhotel.html', all_categories=all_categories)
 
 
 
 # Edit a hotel
-@app.route('/categories/<category_name>/<hotel_name>/edit', methods=['GET', 'POST'])
-def editHotel(category_id, hotel_id):
-    category = session.query(Category).filter_by(id = category_id).one()
+@app.route('/hotels/<hotel_id>/edit', methods=['GET', 'POST'])
+def editHotel(hotel_id):
+    #hotelcategory = session.query(Category).filter_by(id = category_id).one()
     hotel_to_edit = session.query(Hotel).filter_by(id = hotel_id).one()
+    all_categories = session.query(Category).all()
     if request.method == 'POST':
-        hotel_to_edit = request.form['name']
+        if request.form['name']:
+            hotel_to_edit.name = request.form['name']
+        if request.form['description']:
+            hotel_to_edit.description = request.form['description']
+        if request.form['image_url']:
+            hotel_to_edit.image = request.form['image_url']
+        if request.form['location']:
+            hotel_to_edit.location = request.form['location']
         session.add(hotel_to_edit)
         session.commit()
         flash('Successfully edited %s' % hotel_to_edit.name)
-        return redirect(url_for('showHotelDetails'))
+        return redirect(url_for('showHotelDetails', category_id=hotel_to_edit.category.id, hotel_id=hotel_to_edit.id))
     else:
-        return render_template('edithotel.html')
+        return render_template('edithotel.html', hotel_to_edit=hotel_to_edit, all_categories=all_categories)
 
 
 # Delete a hotel
@@ -262,20 +272,21 @@ def deleteHotel(category_id, hotel_id):
         session.delete(hotel_to_delete)
         session.commit()
         flash('You have successfully deleted %s' % hotel_to_delete.name)
-        return redirect(url_for('showCategoryDetails'))
+        return redirect(url_for('showCategoryDetails', category_id=category_id))
     else:
-        return render_template('deletehotel.html')
+        return render_template('deletehotel.html', hotel_to_delete=hotel_to_delete)
 
+'''
 # JSON APIs to view Category and Hotel info
 @app.route('/categories/JSON')
 def categoriesJSON():
 
 @app.route('/categories/<int:category_id>/hotel/JSON')
-def hotelcategoryJSON(category_id):
+def categorydetailJSON(category_id):
 
 @app.route('/categories/<int:category_id>/hotel/<int:hotel_id>/JSON')
 def hoteldetailJSON(category_id, hotel_id):
-
+'''
 
 if __name__ == '__main__':
     app.secret_key = 'something'
