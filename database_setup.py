@@ -54,6 +54,6 @@ class Hotel(Base):
             'location' : self.location,
         }
 
-engine = create_engine('sqlite:///categoryhotels.db')
+engine = create_engine('sqlite:///hotelswithusers.db')
 
 Base.metadata.create_all(engine)
