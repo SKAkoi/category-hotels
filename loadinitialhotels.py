@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Base, User, Category, Hotel
+from database_setup import Base, Category, Hotel
 
-engine = create_engine('sqlite:///hotels.db')
+engine = create_engine('sqlite:///categoryhotels.db')
 
 # Bind the engine to the metadata of the Base class so that the declaratives
 # Can be accessed through a DBSession instance
@@ -79,3 +79,5 @@ hotel6 = Hotel(name="XV Beacon",
                 location="Boston, Massachusetts", category=pet_friendly)
 session.add(hotel6)
 session.commit()
+
+print("hotels have been added")
