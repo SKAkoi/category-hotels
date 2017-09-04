@@ -36,7 +36,7 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
-'''
+
 # Authenticate via the user's Google account
 @app.route('/glogin', methods=['POST'])
 def glogin():
@@ -130,7 +130,42 @@ def glogin():
 # Logout the user by revoking their token and resetting the login session
 @app.route('/logout')
 def glogout():
+    # Only disconnect a connected user
+    access_token - login_session.get('access_token')
+    if access_token is None:
+        print('Access Token is None')
+        response = make_response(json.dumps('Current user not connected'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    print('In glogout access toekn is %s', access_token)
+    print('User name is: ')
+    print(login_session['username'])
 
+    #Execute HTTP GET request to revoke current token
+    #access_toekn = credentials.access_token
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    print('result is')
+    print(result)
+
+    if result['status'] == '200':
+        # Reset the user's session
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    else:
+        #For whatever reason, the given token was Invalid
+        response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 # Create a new user and retrieve their email for logging them in
 def createUser(user_id):
@@ -157,7 +192,7 @@ def getUserInfo(user_id):
     user = session.query(User).filter_by(id = user_id).one()
     return user
 
-'''
+
 
 # Show all hotel categories
 @app.route('/')
