@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+{% include "header.html" %}
+{% block content %}
+  <div>
+    <h3>{{category.name}}</h3>
+    {% for hotel in all_hotels %}
+      <img src="{{hotel.image}}" style="width:270px; height:200px;"/>
+      <p>{{hotel.name}}</p>
+      <p>{{hotel.location}}</p>
+    {% endfor %}
+  </div>
+{% endblock %}

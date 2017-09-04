@@ -1,0 +1,11 @@
+{% extends "main.html" %}
+{% include "header.html" %}
+{% block content %}
+  <div>
+    <h3>{{hotel.name}}</h3>
+    <p>{{hotel.location}}</p>
+    <img src="{{hotel.image}}" style="width:80%"/>
+    <p>{{hotel.description}}</p>
+    <p>{{hotel.category.name}}</p>
+  </div>
+{% endblock %}

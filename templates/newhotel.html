@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+{% include "header.html" %}
+{% block content %}
+  <div>
+    <h3>Add A New Hotel</h3>
+    <br/>
+    <div id="NewHotelForm">
+      <form action="#" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" maxlength="80" name="name" class="form-control"/>
+          <label for="location">Location</label>
+          <input type="text" maxlength="80" name="location" class="form-control" placeholder="E.g, Miami, Florida" />
+          <label for="category">Hotel Category</label>
+          <select class="form-control" name="category">
+            <option value="">Select a hotel category</option>
+            {% for category in all_categories %}
+              <option value={{category.name}}>{{category.name}}</option>
+            {% endfor %}
+          </select>
+          <label for="image">Image URL</label>
+          <input type="text" name="image_url" class="form-control" />
+          <label for="description">Description</label>
+          <textarea rows="3" cols="100" class="form-control" name="description"></textarea>
+          <button class="btn btn-primary" type="submit" id="submit">SUBMIT</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,10 +1,31 @@
 {% extends "main.html" %}
+{% include "header.html" %}
 {% block content %}
-  <div id="category-list">
-      <ul>
+<div class="row">
+  <div class="col-sm-4">
+    <div id="category-list">
+      <h3>Categories</h3>
         {% for category in all_categories %}
-        <li>{{category}}</li>
+          <a href="{{url_for('showCategoryDetails', category_id = category.id)}}">{{category.name}}</a>
+          <br />
         {% endfor %}
       </ul>
+    </div>
+    <br />
+    <a class="btn btn-primary" href="{{url_for('addNewCategory')}}">Add New Category</a>
   </div>
+  <div class="col-sm-8">
+    <div id="hotel-list">
+      <h3>Recently Added Hotels</h3>
+        {% for hotel in recent_hotels %}
+          <img src="{{hotel.image}}" style="width:270px; height:200px" />
+          <br />
+          <a href="{{url_for('showHotelDetails', category_id = hotel.category.id, hotel_id = hotel.id)}}">{{hotel.name}}</a>
+          <br />
+          <p>{{hotel.location}}</p>
+          <a href="{{url_for('showCategoryDetails', category_id = hotel.category.id)}}">{{hotel.category.name}}</a>
+          <br />
+          {% endfor %}
+    </div>
+</div>
 {% endblock %}
