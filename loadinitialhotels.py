@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Base, Category, Hotel
+from database_setup import Base, Category, Hotel, User
 
 engine = create_engine('sqlite:///categoryhotels.db')
 

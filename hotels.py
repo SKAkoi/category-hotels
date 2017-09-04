@@ -4,7 +4,7 @@ app = Flask(__name__)
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
-from database_setup import Base, Hotel, Category
+from database_setup import Base, Hotel, Category, User
 
 # imports to create anti-forgery token
 from flask import session as login_session
