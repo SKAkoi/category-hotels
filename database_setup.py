@@ -5,11 +5,21 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(250), nullable=False, server_default="Admin")
+    email = Column(String(250), nullable=False, server_default="admin@mail.com")
+    picture = Column(String(250))
+
 class Category(Base):
     __tablename__ = 'category'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(250), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -17,7 +27,6 @@ class Category(Base):
         return {
             'name' : self.name,
             'id' : self.id,
-            'user' : self.user,
         }
 
 class Hotel(Base):
@@ -30,6 +39,8 @@ class Hotel(Base):
     location = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
