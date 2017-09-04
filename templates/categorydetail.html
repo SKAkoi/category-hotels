@@ -3,6 +3,11 @@
 {% block content %}
   <div>
     <h3>{{category.name}}</h3>
+    <a href="{{url_for('addNewHotel', category_id = category.id)}}" class="btn btn-success">Add New Hotel</a>
+    <a href="{{url_for('editCategory', category_id = category.id)}}" class="btn btn-warning">Edit Category</a>
+    <a href="{{url_for('deleteCategory', category_id = category.id)}}" class="btn btn-danger">Delete Category</a>
+    <br />
+    <br />
     {% for hotel in all_hotels %}
       <img src="{{hotel.image}}" style="width:270px; height:200px;"/>
       <p>{{hotel.name}}</p>

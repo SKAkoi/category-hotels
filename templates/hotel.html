@@ -7,5 +7,7 @@
     <img src="{{hotel.image}}" style="width:80%"/>
     <p>{{hotel.description}}</p>
     <p>{{hotel.category.name}}</p>
+    <a href="{{url_for('editHotel', hotel_id = hotel.id)}}" class="btn btn-warning">Edit Hotel</a>
+    <a href="{{url_for('deleteHotel', category_id = category.id, hotel_id = hotel.id)}}" class="btn btn-danger">Delete Hotel</a>
   </div>
 {% endblock %}
