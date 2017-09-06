@@ -11,13 +11,6 @@
           <input type="text" maxlength="80" name="name" class="form-control"/>
           <label for="location">Location</label>
           <input type="text" maxlength="80" name="location" class="form-control" placeholder="E.g, Miami, Florida" />
-          <label for="category">Hotel Category</label>
-          <select class="form-control" name="category">
-            <option value="">Select a hotel category</option>
-            {% for category in all_categories %}
-              <option value={{category.name}}>{{category.name}}</option>
-            {% endfor %}
-          </select>
           <label for="image">Image URL</label>
           <input type="text" name="image_url" class="form-control" />
           <label for="description">Description</label>

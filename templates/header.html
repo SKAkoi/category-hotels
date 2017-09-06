@@ -2,6 +2,10 @@
 {% block content %}
   <div id="header">
     <h1><a href="{{url_for('showAllCategories')}}">Category Hotels</a></h1>
-    <a class="btn btn-success" href="{{url_for('showLogin')}}">LOGIN</a>
+    {% if 'username' not in session %}
+      <a class="btn btn-success" href="{{url_for('showLogin')}}">LOGIN</a>
+    {% else %}
+      <span>Welcome, {{session.username}} | <a class="btn btn-danger" href="{{url_for('glogout')}}">LOG OUT</a></span>
+    {% endif %}
   </div>
 {% endblock %}
