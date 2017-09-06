@@ -35,7 +35,7 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                 for x in xrange(32))
     login_session['state'] = state
-    return render_template('header.html', STATE=state)
+    return render_template('login.html', STATE=state)
 
 
 # Authenticate via the user's Google account
@@ -51,7 +51,7 @@ def glogin():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets('client_secret.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -75,7 +75,7 @@ def glogin():
 
     # Verify that the access token matches the intended user.
     gplus_id = credentials.id_token['sub']
-    if result['user_id'] != google_id:
+    if result['user_id'] != gplus_id:
         response = make_response(
                     json.dumps("Token's user ID doesn't match given user ID"),
                     401)
@@ -106,7 +106,7 @@ def glogin():
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
-    data = answer.json
+    data = answer.json()
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
