@@ -22,7 +22,7 @@ CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id
 APPLICATION_NAME = "Hotels App"
 
 # Connect to hotels database and create the database session
-engine = create_engine('sqlite:///hotelswithusers.db')
+engine = create_engine('sqlite:///hotels1.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -112,10 +112,12 @@ def glogin():
     login_session['email'] = data['email']
 
     # Check to see if the user exists. If not, then create a new user
+
     user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
+
 
     output = ''
     output += '<h1>Welcome, '
@@ -132,7 +134,7 @@ def glogin():
 @app.route('/logout')
 def glogout():
     # Only disconnect a connected user
-    access_token - login_session.get('access_token')
+    access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
         response = make_response(json.dumps('Current user not connected'), 401)
@@ -158,9 +160,11 @@ def glogout():
         del login_session['email']
         del login_session['picture']
 
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        #response = make_response(json.dumps('Successfully disconnected.'), 200)
+        #response.headers['Content-Type'] = 'application/json'
+        #return response
+        flash("You are now logged out. Sign in to your account.")
+        return redirect(url_for('showAllCategories'))
 
     else:
         #For whatever reason, the given token was Invalid
@@ -169,7 +173,7 @@ def glogout():
         return response
 
 # Create a new user and retrieve their email for logging them in
-def createUser(user_id):
+def createUser(login_session):
     newUser = User(name = login_session['username'],
                     email = login_session['email'],
                     picture = login_session['picture'])
@@ -178,11 +182,10 @@ def createUser(user_id):
     user = session.query(User).filter_by(email = login_session['email']).one()
     return user.id
 
-
 # Retrieve a user's email from the DB for use in permission handling
 def getUserID(email):
     try:
-        user = session.query(User).filter_by(login_session['email']).one()
+        user = session.query(User).filter_by(email=email).one()
         return user.id
     except:
         return None
@@ -195,6 +198,8 @@ def getUserInfo(user_id):
 
 
 
+
+
 # Show all hotel categories
 @app.route('/')
 @app.route('/categories')
@@ -203,27 +208,14 @@ def showAllCategories():
     recent_hotels = session.query(Hotel).all()
     return render_template('home.html', all_categories=all_categories, recent_hotels=recent_hotels)
 
-# Show the hotels for a given category
-@app.route('/categories/<category_id>')
-@app.route('/categories/<category_id>/hotels')
-def showCategoryDetails(category_id):
-    category = session.query(Category).filter_by(id=category_id).one()
-    all_hotels = session.query(Hotel).filter_by(id=category_id).all()
-    return render_template('categorydetail.html', category=category, all_hotels=all_hotels)
-
-# Show the details of a given hotel
-@app.route('/categories/<category_id>/<hotel_id>')
-def showHotelDetails(category_id, hotel_id):
-    hotel = session.query(Hotel).filter_by(id = hotel_id).one()
-    category = session.query(Category).filter_by(id = category_id).one()
-    return render_template('hotel.html', hotel=hotel, category=category)
-
 # Create a new category
 @app.route('/addcategory', methods=['POST', 'GET'])
 @app.route('/categories/addcategory', methods=['POST', 'GET'])
 def addNewCategory():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
-        new_category = Category(name = request.form['name'])
+        new_category = Category(name=request.form['name'], user_id=login_session['user_id'])
         session.add(new_category)
         session.commit()
         flash('Successfully added %s as a new category' % new_category.name)
@@ -235,6 +227,10 @@ def addNewCategory():
 @app.route('/categories/<category_id>/edit', methods=['GET', 'POST'])
 def editCategory(category_id):
     category_to_edit = session.query(Category).filter_by(id = category_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
+    if category_to_edit.user_id != login_session['user_id']:
+        return "<script>function myFunction() {alert('You are not authorised to edit this category. Please create your own category in order to edit it. ');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         if request.form['name']:
             category_to_edit.name = request.form['name']
@@ -249,6 +245,10 @@ def editCategory(category_id):
 @app.route('/categories/<category_id>/delete', methods=['GET', 'POST'])
 def deleteCategory(category_id):
     category_to_delete = session.query(Category).filter_by(id = category_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
+    if category_to_delete.user_id != login_session['user_id']:
+        return "<script>function myFunction() {alert('You are not authorised to delete this category.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(category_to_delete)
         session.commit()
@@ -257,31 +257,56 @@ def deleteCategory(category_id):
     else:
         return render_template('deletecategory.html', category_to_delete=category_to_delete)
 
+
+# Show all the hotels for a given category
+@app.route('/categories/<category_id>')
+@app.route('/categories/<category_id>/hotels')
+def showCategoryDetails(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    all_hotels = session.query(Hotel).filter_by(id=category_id).all()
+    return render_template('categorydetail.html', category=category, all_hotels=all_hotels)
+
+# Show the details of a given hotel
+@app.route('/categories/<category_id>/<hotel_id>')
+def showHotelDetails(category_id, hotel_id):
+    hotel = session.query(Hotel).filter_by(id = hotel_id).one()
+    category = session.query(Category).filter_by(id = category_id).one()
+    return render_template('hotel.html', hotel=hotel, category=category)
+
 # Create a new hotel
 @app.route('/categories/<category_id>/hotels/addhotel', methods=['GET', 'POST'])
 def addNewHotel(category_id):
-    all_categories = session.query(Category).all()
+    if 'username' not in login_session:
+        return redirect('/login')
+    #all_categories = session.query(Category).all()
+    category = session.query(Category).filter_by(id=category_id).one()
+    if login_session['user_id'] != category.user_id:
+        return "<script>function myFunction() {alert('You are not authorised to add hotels to this category. Please create a category to add hotels to it');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         newHotel = Hotel(name = request.form['name'],
                         description = request.form['description'],
                         image = request.form['image_url'],
                         category_id = category_id,
-                        location = request.form['location'])
+                        location = request.form['location'],
+                        user_id=category.user_id)
         session.add(newHotel)
         session.commit()
         flash('You have added %s as a new hotel' % newHotel.name)
         return redirect(url_for('showHotelDetails', category_id=category_id, hotel_id=newHotel.id))
     else:
-        return render_template('newhotel.html', all_categories=all_categories)
-
-
+        return render_template('newhotel.html')
 
 # Edit a hotel
 @app.route('/hotels/<hotel_id>/edit', methods=['GET', 'POST'])
 def editHotel(hotel_id):
-    #hotelcategory = session.query(Category).filter_by(id = category_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
     hotel_to_edit = session.query(Hotel).filter_by(id = hotel_id).one()
     all_categories = session.query(Category).all()
+    category = session.query(Category).filter_by(id=hotel_to_edit.category.id).one()
+    if login_session['user_id'] != category.user_id:
+        return "<script>function myFunction() {alert('You are not authorised to edit this hotel. Please add your own hotel before you can edit it.');}</script><body onload='myFunction()''>"
+
     if request.method == 'POST':
         if request.form['name']:
             hotel_to_edit.name = request.form['name']
@@ -302,8 +327,12 @@ def editHotel(hotel_id):
 # Delete a hotel
 @app.route('/categories/<int:category_id>/hotels/<int:hotel_id>/delete', methods=['GET', 'POST'])
 def deleteHotel(category_id, hotel_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     category = session.query(Category).filter_by(id = category_id).one()
     hotel_to_delete = session.query(Hotel).filter_by(id = hotel_id).one()
+    if login_session['user_id'] != category.user_id:
+        return "<script>function myFunction() {alert('You are not authorised to delete this hotel.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(hotel_to_delete)
         session.commit()
