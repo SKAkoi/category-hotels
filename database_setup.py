@@ -9,8 +9,8 @@ class User(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(250), nullable=False, server_default="Admin")
-    email = Column(String(250), nullable=False, server_default="admin@mail.com")
+    name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
     picture = Column(String(250))
 
 class Category(Base):
@@ -54,6 +54,6 @@ class Hotel(Base):
             'location' : self.location,
         }
 
-engine = create_engine('sqlite:///hotelswithusers.db')
+engine = create_engine('sqlite:///hotels1.db')
 
 Base.metadata.create_all(engine)
