@@ -230,7 +230,7 @@ def editCategory(category_id):
     if 'username' not in login_session:
         return redirect('/login')
     if category_to_edit.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorised to edit this category. Please create your own category in order to edit it. ');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You are not authorised to edit this category. Please create your own category in order to edit it. ');setTimeout(function() {window.location.href='/';}, 200);}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         if request.form['name']:
             category_to_edit.name = request.form['name']
@@ -248,7 +248,7 @@ def deleteCategory(category_id):
     if 'username' not in login_session:
         return redirect('/login')
     if category_to_delete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorised to delete this category.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You are not authorised to delete this category.');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(category_to_delete)
         session.commit()
@@ -281,7 +281,7 @@ def addNewHotel(category_id):
     #all_categories = session.query(Category).all()
     category = session.query(Category).filter_by(id=category_id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorised to add hotels to this category. Please create a category to add hotels to it');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You are not authorised to add hotels to this category. Please create a category to add hotels to it');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         newHotel = Hotel(name = request.form['name'],
                         description = request.form['description'],
@@ -305,7 +305,7 @@ def editHotel(hotel_id):
     all_categories = session.query(Category).all()
     category = session.query(Category).filter_by(id=hotel_to_edit.category.id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorised to edit this hotel. Please add your own hotel before you can edit it.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You are not authorised to edit this hotel. Please add your own hotel before you can edit it.');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
 
     if request.method == 'POST':
         if request.form['name']:
@@ -332,7 +332,7 @@ def deleteHotel(category_id, hotel_id):
     category = session.query(Category).filter_by(id = category_id).one()
     hotel_to_delete = session.query(Hotel).filter_by(id = hotel_id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorised to delete this hotel.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You are not authorised to delete this hotel.');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(hotel_to_delete)
         session.commit()
