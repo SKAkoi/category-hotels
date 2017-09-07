@@ -10,8 +10,10 @@
     <br />
     {% for hotel in all_hotels %}
       <img src="{{hotel.image}}" style="width:270px; height:200px;"/>
-      <p>{{hotel.name}}</p>
-      <p>{{hotel.location}}</p>
+      <br />
+      <a href="{{url_for('showHotelDetails', category_id = category.id, hotel_id = hotel.id)}}">{{hotel.name}}</a>
+      <br />
+      <a>{{hotel.location}}</a>
     {% endfor %}
   </div>
 {% endblock %}
