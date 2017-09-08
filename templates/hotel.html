@@ -6,6 +6,7 @@
     <p>{{hotel.location}}</p>
     <img src="{{hotel.image}}" style="width:80%"/>
     <p>{{hotel.description}}</p>
+    <iframe width="600" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA-xGJj9I-WFUH9Z5VxaJ78WZE308bN1us&q={{hotel.location}}" allowfullscreen></iframe>
     <a href="{{url_for('showCategoryDetails', category_id = category.id)}}">{{hotel.category.name}}</a>
     <a href="{{url_for('editHotel', hotel_id = hotel.id)}}" class="btn btn-warning">Edit Hotel</a>
     <a href="{{url_for('deleteHotel', category_id = category.id, hotel_id = hotel.id)}}" class="btn btn-danger">Delete Hotel</a>

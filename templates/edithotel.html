@@ -9,16 +9,23 @@
       <form action="#" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" value="{{hotel_to_edit.name}}" name="name" class="form-control"/>
+          <input type="text" value="{{hotel_to_edit.name}}" name="name" class="form-control" required/>
           <label for="location">Location</label>
-          <input type="text" value="{{hotel_to_edit.location}}" name="location" class="form-control" placeholder="E.g, Miami, Florida" />
+          <input type="text" id="searchTextField" value="{{hotel_to_edit.location}}" name="location" class="form-control" placeholder="E.g, Miami, Florida" required/>
           <label for="image">Image URL</label>
-          <input type="text" value="{{hotel_to_edit.image}}" name="image_url" class="form-control" />
+          <input type="text" value="{{hotel_to_edit.image}}" name="image_url" class="form-control" required/>
           <label for="description">Description</label>
-          <textarea rows="3" cols="100" class="form-control" name="description">{{hotel_to_edit.description}}</textarea>
+          <textarea rows="3" cols="100" class="form-control" name="description" required>{{hotel_to_edit.description}}</textarea>
           <button class="btn btn-primary" type="submit" id="submit">SUBMIT</button>
         </div>
       </form>
     </div>
   </div>
+  <script>
+    function initialize() {
+      var input = document.getElementById('searchTextField');
+      var autocomplete = new google.maps.places.Autocomplete(input);
+    }
+  google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
 {% endblock %}
