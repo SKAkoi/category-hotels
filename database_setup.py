@@ -50,7 +50,8 @@ class Hotel(Base):
             'id' : self.id,
             'description' : self.description,
             'image' : self.image,
-            'category' : self.category,
+            'category_id' : self.category_id,
+            'category_name': self.category.name,
             'location' : self.location,
         }
 
