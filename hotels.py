@@ -263,7 +263,7 @@ def deleteCategory(category_id):
 @app.route('/categories/<category_id>/hotels')
 def showCategoryDetails(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
-    all_hotels = session.query(Hotel).filter_by(id=category_id).all()
+    all_hotels = session.query(Hotel).filter_by(category_id=category_id).all()
     return render_template('categorydetail.html', category=category, all_hotels=all_hotels)
 
 # Show the details of a given hotel
@@ -340,14 +340,18 @@ def deleteHotel(category_id, hotel_id):
         return redirect(url_for('showCategoryDetails', category_id=category_id))
     else:
         return render_template('deletehotel.html', hotel_to_delete=hotel_to_delete)
-
 '''
 # JSON APIs to view Category and Hotel info
 @app.route('/categories/JSON')
 def categoriesJSON():
+    categories = session.query(Category).all()
+    return jsonify(categories = [c.serialize for c in categories])
 
 @app.route('/categories/<int:category_id>/hotel/JSON')
 def categorydetailJSON(category_id):
+    category = session.query(Category).filter_by(id = category_id).one()
+    hotels = session.query(Hotel).filter_by(category_id = category_id).all()
+    return jsonify(hotels = [h.serialize for h in hotels])
 
 @app.route('/categories/<int:category_id>/hotel/<int:hotel_id>/JSON')
 def hoteldetailJSON(category_id, hotel_id):
