@@ -347,6 +347,11 @@ def categoriesJSON():
     categories = session.query(Category).all()
     return jsonify(categories = [c.serialize for c in categories])
 
+@app.route('/allhotels/JSON')
+def allhotelsJSON():
+    all_hotels = session.query(Hotel).all()
+    return jsonify(all_hotels = [a.serialize for a in all_hotels])
+
 @app.route('/categories/<category_id>/hotels/JSON')
 def categorydetailJSON(category_id):
     category = session.query(Category).filter_by(id = category_id).one()
