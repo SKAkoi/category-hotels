@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 app = Flask(__name__)
 
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from database_setup import Base, Hotel, Category, User
@@ -126,7 +126,7 @@ def glogin():
     output += '<img src="'
     output += login_session['picture']
     output += ' "style = "width:300px; height:300px;">'
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("You are now logged in as %s" % login_session['username'])
     print("done!")
     return output
 
@@ -160,8 +160,8 @@ def glogout():
         del login_session['email']
         del login_session['picture']
 
-        #response = make_response(json.dumps('Successfully disconnected.'), 200)
-        #response.headers['Content-Type'] = 'application/json'
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
         #return response
         flash("You are now logged out. Sign in to your account.")
         return redirect(url_for('showAllCategories'))
@@ -205,7 +205,7 @@ def getUserInfo(user_id):
 @app.route('/categories')
 def showAllCategories():
     all_categories = session.query(Category).all()
-    recent_hotels = session.query(Hotel).all()
+    recent_hotels = session.query(Hotel).order_by(desc(Hotel.id)).limit(6)
     return render_template('home.html', all_categories=all_categories, recent_hotels=recent_hotels)
 
 # Create a new category
@@ -262,16 +262,18 @@ def deleteCategory(category_id):
 @app.route('/categories/<category_id>')
 @app.route('/categories/<category_id>/hotels')
 def showCategoryDetails(category_id):
-    category = session.query(Category).filter_by(id=category_id).one()
+    main_category = session.query(Category).filter_by(id=category_id).one()
     all_hotels = session.query(Hotel).filter_by(category_id=category_id).all()
-    return render_template('categorydetail.html', category=category, all_hotels=all_hotels)
+    all_categories = session.query(Category).all()
+    return render_template('categorydetail.html', main_category=main_category, all_hotels=all_hotels, all_categories=all_categories)
 
 # Show the details of a given hotel
 @app.route('/categories/<category_id>/<hotel_id>')
 def showHotelDetails(category_id, hotel_id):
     hotel = session.query(Hotel).filter_by(id = hotel_id).one()
     category = session.query(Category).filter_by(id = category_id).one()
-    return render_template('hotel.html', hotel=hotel, category=category)
+    properties = session.query(Hotel).filter_by(category_id = category_id).all()
+    return render_template('hotel.html', hotel=hotel, category=category, properties=properties)
 
 # Create a new hotel
 @app.route('/categories/<category_id>/hotels/addhotel', methods=['GET', 'POST'])
