@@ -1,14 +1,15 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-  <div>
-    <h3>Add A New Category</h3>
-    <div id="categoryform">
+  <div class="addnewcategory container">
+    <h1 class="center-text">Add A New Hotel Category</h1>
+    <div class="form">
       <form action="#" method="post">
         <div class="form-group">
           <label for="name">Category Name:</label>
-          <input type="text" class="form-control" maxlength="100" name="name" required/>
-          <button type="submit" class="btn btn-warning" id="submit" type="submit">SUBMIT</button>
+          <input type="text" class="form-control" length="320px" name="name" required/>
+          <br />
+          <button type="submit" class="btn btn-success btn-block" id="submit" type="submit">SUBMIT</button>
         </div>
       </form>
     </div>

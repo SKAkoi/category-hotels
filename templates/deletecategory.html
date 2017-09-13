@@ -1,8 +1,9 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-  <div>
-    <h3>Delete Category</h3>
+<div class="container">
+  <div class="center-text">
+    <h1 class="center-text">Delete {{category_to_delete}}?</h1>
     <p><strong>Are you sure you want to delete the {{category_to_delete.name}} Category?</strong></p>
     <div>
       <form action="#" method="post">
@@ -10,4 +11,5 @@
       </form>
     </div>
   </div>
+</div>
 {% endblock %}

@@ -1,18 +1,21 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-<div>
-  <h3>Edit Category</h3>
+<div class="container">
+  <h1 class="center-text">Edit {{category_to_edit.name}}?</h1>
   <hr/>
   <div id="EditCategoryForm">
-    <h4>{{category_to_edit.name}}</h4>
-    <form action="#" method="post">
-      <div class="form-group">
-        <label for="name">Enter a new name:</label>
-        <input type="text" maxlength="100" class="form-control" name="name" required/>
-        <button type="submit" class="btn btn-warning" id="submit">SUBMIT</button>
-      </div>
-    </form>
+    <h3>{{category_to_edit.name}}</h3>
+    <div class="form">
+      <form action="#" method="post">
+        <div class="form-group">
+          <label for="name">Enter a new name:</label>
+          <input type="text" maxlength="100" class="form-control" name="name" required/>
+          <button type="submit" class="btn btn-success btn-block" id="submit">SUBMIT</button>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>
 {% endblock %}

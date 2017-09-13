@@ -1,19 +1,36 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-  <div>
-    <h3>{{category.name}}</h3>
-    <a href="{{url_for('addNewHotel', category_id = category.id)}}" class="btn btn-success">Add New Hotel</a>
-    <a href="{{url_for('editCategory', category_id = category.id)}}" class="btn btn-warning">Edit Category</a>
-    <a href="{{url_for('deleteCategory', category_id = category.id)}}" class="btn btn-danger">Delete Category</a>
+<div class="container">
+  <div class="row">
+    <div class="categorybuttons">
+      <h1 class="center-text">{{main_category.name}}</h1>
+      <a href="{{url_for('addNewHotel', category_id = main_category.id)}}" class="btn btn-primary">Add New Hotel</a>
+      <a href="{{url_for('editCategory', category_id = main_category.id)}}" class="btn btn-warning">Edit Category</a>
+      <a href="{{url_for('deleteCategory', category_id = main_category.id)}}" class="btn btn-danger">Delete Category</a>
+    </div>
     <br />
-    <br />
-    {% for hotel in all_hotels %}
-      <img src="{{hotel.image}}" style="width:270px; height:200px;"/>
-      <br />
-      <a href="{{url_for('showHotelDetails', category_id = category.id, hotel_id = hotel.id)}}">{{hotel.name}}</a>
-      <br />
-      <a>{{hotel.location}}</a>
-    {% endfor %}
+    <div class="col-sm-2">
+      <div class="category-list">
+        <h3>Categories</h3>
+          {% for category in all_categories %}
+            <p><a href="{{url_for('showCategoryDetails', category_id = category.id)}}">{{category.name}}</a></p>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-10">
+      <div class="hotel-list">
+          {% for hotel in all_hotels %}
+          <div class="hotel-card">
+            <img src="{{hotel.image}}" style="width:270px; height:200px;"/>
+            <br />
+            <h4><a href="{{url_for('showHotelDetails', category_id = main_category.id, hotel_id = hotel.id)}}">{{hotel.name}}</a></h4>
+            <p>{{hotel.location}}</p>
+          </div>
+          {% endfor %}
+      </div>
+    </div>
   </div>
+</div>
 {% endblock %}

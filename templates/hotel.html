@@ -1,14 +1,37 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-  <div>
-    <h3>{{hotel.name}}</h3>
-    <p>{{hotel.location}}</p>
-    <img src="{{hotel.image}}" style="width:80%"/>
-    <p>{{hotel.description}}</p>
-    <iframe width="600" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA-xGJj9I-WFUH9Z5VxaJ78WZE308bN1us&q={{hotel.location}}" allowfullscreen></iframe>
-    <a href="{{url_for('showCategoryDetails', category_id = category.id)}}">{{hotel.category.name}}</a>
-    <a href="{{url_for('editHotel', hotel_id = hotel.id)}}" class="btn btn-warning">Edit Hotel</a>
-    <a href="{{url_for('deleteHotel', category_id = category.id, hotel_id = hotel.id)}}" class="btn btn-danger">Delete Hotel</a>
+  <div class="row">
+    <div class="container">
+    <div class="hotelbuttons center-text">
+      <h1>{{hotel.name}}</h1>
+      <p>{{hotel.location}}</p>
+      <span class="tag">{{hotel.category.name}}</span>
+      <br />
+      <br />
+      <span>
+      <a href="{{url_for('editHotel', hotel_id = hotel.id)}}" class="btn btn-warning">Edit Hotel</a>
+      <a href="{{url_for('deleteHotel', category_id = category.id, hotel_id = hotel.id)}}" class="btn btn-danger">Delete Hotel</a>
+    </span>
+    </div>
+    <div class="col-sm-2">
+      <h4><a href="{{url_for('showCategoryDetails', category_id = category.id)}}">All {{hotel.category.name}} Hotels</a></h4>
+      {% for property in properties %}
+        <p><a href="{{url_for('showHotelDetails', category_id = category.id, hotel_id = property.id)}}">{{property.name}}</a></p>
+      {% endfor %}
+    </div>
+    <div class="col-sm-10">
+      <div class="hotel-detail">
+        <img src="{{hotel.image}}"/>
+        <br />
+        <br />
+        <p>{{hotel.description}}</p>
+        <br />
+      </div>
+
+      <iframe width="100%" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA-xGJj9I-WFUH9Z5VxaJ78WZE308bN1us&q={{hotel.location}}" allowfullscreen></iframe>
+
+    </div>
+  </div>
   </div>
 {% endblock %}

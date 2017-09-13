@@ -1,13 +1,15 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-<div>
-  <h3>Delete Hotel</h3>
+<div class="container">
+<div class="center-text">
+  <h1>Delete {{hotel_to_delete.name}}?</h1>
   <p><strong>Are you sure you want to delete the {{hotel_to_delete.name}}?</strong></p>
   <div>
     <form action="#" method="post">
       <button class="btn btn-danger" value="submit">DELETE</button>
     </form>
   </div>
+</div>
 </div>
 {% endblock %}

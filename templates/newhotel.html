@@ -1,21 +1,25 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-  <div>
-    <h3>Add A New Hotel</h3>
+  <div class="container">
+    <h1 class="center-text">Add A New Hotel</h1>
     <br/>
-    <div id="NewHotelForm">
+    <div class="form">
       <form action="#" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label for="name">Name</label>
           <input type="text" maxlength="80" name="name" class="form-control" required/>
+          <br />
           <label for="location">Location</label>
           <input id="searchTextField" type="text" maxlength="80" name="location" class="form-control" placeholder="E.g, Miami, Florida" required />
+          <br />
           <label for="image">Image URL</label>
           <input type="text" name="image_url" class="form-control" required/>
+          <br />
           <label for="description">Description</label>
           <textarea rows="3" cols="100" class="form-control" name="description" required></textarea>
-          <button class="btn btn-primary" type="submit" id="submit">SUBMIT</button>
+          <br />
+          <button class="btn btn-success btn-block" type="submit" id="submit">SUBMIT</button>
         </div>
       </form>
     </div>

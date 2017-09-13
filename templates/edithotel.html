@@ -1,22 +1,26 @@
 {% extends "main.html" %}
 {% include "header.html" %}
 {% block content %}
-  <div>
-    <h3>Edit {{hotel_to_edit.name}}</h3>
-    <p>Category: {{hotel_to_edit.category.name}}</p>
+  <div class="container">
+    <h1 class="center-text">Edit {{hotel_to_edit.name}}?</h1>
+    <p class="center-text">Category: {{hotel_to_edit.category.name}}</p>
     <br/>
-    <div id="EditHotelForm">
+    <div class="form">
       <form action="#" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label for="name">Name</label>
           <input type="text" value="{{hotel_to_edit.name}}" name="name" class="form-control" required/>
+          <br />
           <label for="location">Location</label>
           <input type="text" id="searchTextField" value="{{hotel_to_edit.location}}" name="location" class="form-control" placeholder="E.g, Miami, Florida" required/>
+          <br />
           <label for="image">Image URL</label>
           <input type="text" value="{{hotel_to_edit.image}}" name="image_url" class="form-control" required/>
+          <br />
           <label for="description">Description</label>
           <textarea rows="3" cols="100" class="form-control" name="description" required>{{hotel_to_edit.description}}</textarea>
-          <button class="btn btn-primary" type="submit" id="submit">SUBMIT</button>
+          <br />
+          <button class="btn btn-success btn-block" type="submit" id="submit">SUBMIT</button>
         </div>
       </form>
     </div>

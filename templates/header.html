@@ -1,11 +1,27 @@
 {% extends "main.html" %}
 {% block content %}
-  <div id="header">
-    <h1><a href="{{url_for('showAllCategories')}}">Category Hotels</a></h1>
-    {% if 'username' not in session %}
-      <a class="btn btn-success" href="{{url_for('showLogin')}}">LOGIN</a>
-    {% else %}
-      <span>Welcome, {{session.username}} | <a class="btn btn-danger" href="{{url_for('glogout')}}">LOG OUT</a></span>
-    {% endif %}
+  <div class="row">
+    <div class="container">
+    <div class="col-sm-8">
+      <div class="brand">
+        <h1><a href="{{url_for('showAllCategories')}}">Category Hotels</a></h1>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="login-info">
+      {% if 'username' not in session %}
+        <a class="btn btn-success" href="{{url_for('showLogin')}}">LOGIN</a>
+      {% else %}
+        <div class="signedin-user">
+          <span class="center-text">Welcome, {{session.username}} </span>
+          <span class="center-text"><img src="{{session.picture}}"/></span>
+          <span><a class="btn btn-danger" href="{{url_for('glogout')}}">LOG OUT</a></span>
+
+      {% endif %}
+        </div>
+    </div>
   </div>
+</div>
+</div>
+<hr />
 {% endblock %}
