@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+
+p {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.flash {
+  background-color: rgb(221, 255, 170);
+  width: 100%;
+  text-align: center;
+  padding: 2px 0 2px 0;
+}
+
+.alert-success {
+  padding: 5px;
+}
+
+/* Begin styling for header (header.html) */
+.login-info {
+  position: absolute;
+  margin-top: 20px;
+  right: 0;
+}
+
+.brand a {
+  color: #E67E22;
+}
+
+.signedin-user {
+  text-align: center;
+}
+.signedin-user img {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+}
+
+/* Begin styling for home page (home.html) */
+.category-list {
+  font-size: 1.25em;
+  display: block;
+}
+
+.hotel-list {
+  display: flex;
+  flex-wrap: wrap;
+  border-left: 1px solid #e2e2e2;
+}
+
+.hotel-card {
+  display: block;
+  padding: 10px;
+  width: 33%;
+}
+
+/* Begin styling for login page (login.html) */
+
+.login-section {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background: url('resort.jpg');
+  background-size: cover;
+  /*top: 50%;
+  left: 50%;*/
+  text-align: center;
+  /*transform: translate(-50%, -50%);*/
+}
+
+.login-block {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  background-color: rgba(0,0,0,0.5);
+  padding: 25px;
+  width: 320px;
+  height: 320px;
+  border-radius: 5px;
+}
+
+.login-block a {
+  color: #ffffff;
+}
+
+/* Begin styling for the category detail page (categorydetail.html) */
+.categorybuttons {
+  text-align: center;
+}
+
+/* Begin styling for the hotel detail page (hotel.html) */
+.hotelbuttons {
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.hotel-detail {
+  width: 100%;
+}
+
+.hotel-detail img {
+  width: 100%;
+}
+
+.tag {
+  background-color: rgba(78, 205, 196, 0.25);
+  border-radius: 10px;
+  padding: 7px;
+}
+
+/* Begin styling for adding new category page (newcategory.html) */
+.form {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Styling for small screens */
+@media screen and (max-width:500px) {
+  .category-list {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  .category-list p {
+    display: inline;
+    margin: 10px;
+    background-color: rgba(228, 241, 254, 0.15);
+    border-radius: 25px;
+    padding: 3px 10px 3px 10px;
+  }
+
+  .category-list h3 {
+    display: none;
+  }
+
+  .addcategory {
+    text-align: center;
+  }
+
+  .signedin-user {
+    text-align: center;
+    width: 320px;
+    margin: 0 auto;
+  }
+}
