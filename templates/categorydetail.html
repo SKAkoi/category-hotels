@@ -3,6 +3,15 @@
 {% block content %}
 <div class="container">
   <div class="row">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="alert-success">
+        {% for message in messages %}
+          <p>{{message}}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
     <div class="categorybuttons">
       <h1 class="center-text">{{main_category.name}}</h1>
       <a href="{{url_for('addNewHotel', category_id = main_category.id)}}" class="btn btn-primary">Add New Hotel</a>
