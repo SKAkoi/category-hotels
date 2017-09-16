@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
-app = Flask(__name__)
-
+from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import flash
 from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
@@ -8,7 +7,8 @@ from database_setup import Base, Hotel, Category, User
 
 # imports to create anti-forgery token
 from flask import session as login_session
-import random, string
+import random
+import string
 
 # imports for logging in via oauth(Google)
 from oauth2client.client import flow_from_clientsecrets
@@ -18,7 +18,10 @@ import json
 from flask import make_response
 import requests
 
-CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
+app = Flask(__name__)
+
+CLIENT_ID = json.loads(open(
+    'client_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Hotels App"
 
 # Connect to hotels database and create the database session
@@ -32,8 +35,8 @@ session = DBSession()
 # And then store it in the session for later validation
 @app.route('/login')
 def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                for x in xrange(32))
+    state = ''.join(random.choice(
+        string.ascii_uppercase + string.digits)for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
@@ -55,16 +58,16 @@ def glogin():
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
-        response = make_response(
-                        json.dumps('Failed to upgrade the authorization code.'),
-                        401)
+        response = make_response(json.dumps(
+            'Failed to upgrade the authorization code.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
 
     # Check that the access token is valid
     access_token = credentials.access_token
-    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' %
-            access_token)
+    url = (
+        'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
+        % access_token)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
     # If there was an error in the access token info, abort.
@@ -118,7 +121,6 @@ def glogin():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -130,7 +132,9 @@ def glogin():
     print("done!")
     return output
 
+
 # Logout the user by revoking their token and resetting the login session
+
 @app.route('/logout')
 def glogout():
     # Only disconnect a connected user
@@ -144,9 +148,10 @@ def glogout():
     print('User name is: ')
     print(login_session['username'])
 
-    #Execute HTTP GET request to revoke current token
-    #access_toekn = credentials.access_token
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    # Execute HTTP GET request to revoke current token
+    url = (
+        'https://accounts.google.com/o/oauth2/revoke?token=%s'
+        % login_session['access_token'])
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print('result is')
@@ -162,25 +167,29 @@ def glogout():
 
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        #return response
+        # return response
         flash("You are now logged out. Sign in to your account.")
         return redirect(url_for('showAllCategories'))
 
     else:
-        #For whatever reason, the given token was Invalid
-        response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
+        # For whatever reason, the given token was Invalid
+        response = make_response(json.dumps(
+            'Failed to revoke token for given user.'), 400)
         response.headers['Content-Type'] = 'application/json'
         return response
 
+
 # Create a new user and retrieve their email for logging them in
 def createUser(login_session):
-    newUser = User(name = login_session['username'],
-                    email = login_session['email'],
-                    picture = login_session['picture'])
+    newUser = User(
+        name=login_session['username'],
+        email=login_session['email'],
+        picture=login_session['picture'])
     session.add(newUser)
     session.commit()
-    user = session.query(User).filter_by(email = login_session['email']).one()
+    user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
+
 
 # Retrieve a user's email from the DB for use in permission handling
 def getUserID(email):
@@ -191,13 +200,10 @@ def getUserID(email):
         return None
 
 
-# Retrieve user's info from DB from the DB for use in permission handling later on
+# Retrieve user's info from DB from the DB for use in permission handling
 def getUserInfo(user_id):
-    user = session.query(User).filter_by(id = user_id).one()
+    user = session.query(User).filter_by(id=user_id).one()
     return user
-
-
-
 
 
 # Show all hotel categories
@@ -206,7 +212,10 @@ def getUserInfo(user_id):
 def showAllCategories():
     all_categories = session.query(Category).all()
     recent_hotels = session.query(Hotel).order_by(desc(Hotel.id)).limit(6)
-    return render_template('home.html', all_categories=all_categories, recent_hotels=recent_hotels)
+    return render_template(
+        'home.html', all_categories=all_categories,
+        recent_hotels=recent_hotels)
+
 
 # Create a new category
 @app.route('/addcategory', methods=['POST', 'GET'])
@@ -215,7 +224,8 @@ def addNewCategory():
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        new_category = Category(name=request.form['name'], user_id=login_session['user_id'])
+        new_category = Category(
+            name=request.form['name'], user_id=login_session['user_id'])
         session.add(new_category)
         session.commit()
         flash('Successfully added %s as a new category' % new_category.name)
@@ -223,14 +233,27 @@ def addNewCategory():
     elif request.method == 'GET':
         return render_template('newcategory.html')
 
+
 # Edit a category
 @app.route('/categories/<category_id>/edit', methods=['GET', 'POST'])
 def editCategory(category_id):
-    category_to_edit = session.query(Category).filter_by(id = category_id).one()
+    category_to_edit = session.query(Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if category_to_edit.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorised to edit this category. Please create your own category in order to edit it. ');setTimeout(function() {window.location.href='/';}, 200);}</script><body onload='myFunction()''>"
+        prompt = ""
+        prompt += "<script>function myFunction()"
+        prompt += "{alert("
+        prompt += "'You are not authorised to edit this category."
+        prompt += "Please create your own category to edit it.'"
+        prompt += ");"
+        prompt += "setTimeout(function() {window.location.href="
+        prompt += "'/'"
+        prompt += ";}, 200);}"
+        prompt += "</script><body onload="
+        prompt += "'myFunction()'"
+        prompt += ">"
+        return prompt
     if request.method == 'POST':
         if request.form['name']:
             category_to_edit.name = request.form['name']
@@ -239,23 +262,39 @@ def editCategory(category_id):
             flash('Category %s successfully edited' % category_to_edit.name)
             return redirect(url_for('showAllCategories'))
     else:
-        return render_template('editcategory.html', category_to_edit=category_to_edit)
+        return render_template(
+            'editcategory.html', category_to_edit=category_to_edit)
+
 
 # Delete a category
 @app.route('/categories/<category_id>/delete', methods=['GET', 'POST'])
 def deleteCategory(category_id):
-    category_to_delete = session.query(Category).filter_by(id = category_id).one()
+    category_to_delete = session.query(Category).filter_by(
+        id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if category_to_delete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorised to delete this category.');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
+        prompt = ""
+        prompt += "<script>function myFunction()"
+        prompt += "{alert("
+        prompt += "'You are not authorised to delete this category."
+        prompt += "Please create your own category to delete it.'"
+        prompt += ");"
+        prompt += "setTimeout(function() {window.location.href="
+        prompt += "'/'"
+        prompt += ";}, 200);}"
+        prompt += "</script><body onload="
+        prompt += "'myFunction()'"
+        prompt += ">"
+        return prompt
     if request.method == 'POST':
         session.delete(category_to_delete)
         session.commit()
         flash('Successfully deleted %s' % category_to_delete)
         return redirect(url_for('showAllCategories'))
     else:
-        return render_template('deletecategory.html', category_to_delete=category_to_delete)
+        return render_template(
+            'deletecategory.html', category_to_delete=category_to_delete)
 
 
 # Show all the hotels for a given category
@@ -265,49 +304,78 @@ def showCategoryDetails(category_id):
     main_category = session.query(Category).filter_by(id=category_id).one()
     all_hotels = session.query(Hotel).filter_by(category_id=category_id).all()
     all_categories = session.query(Category).all()
-    return render_template('categorydetail.html', main_category=main_category, all_hotels=all_hotels, all_categories=all_categories)
+    return render_template(
+        'categorydetail.html', main_category=main_category,
+        all_hotels=all_hotels, all_categories=all_categories)
+
 
 # Show the details of a given hotel
 @app.route('/categories/<category_id>/<hotel_id>')
 def showHotelDetails(category_id, hotel_id):
-    hotel = session.query(Hotel).filter_by(id = hotel_id).one()
-    category = session.query(Category).filter_by(id = category_id).one()
-    properties = session.query(Hotel).filter_by(category_id = category_id).all()
-    return render_template('hotel.html', hotel=hotel, category=category, properties=properties)
+    hotel = session.query(Hotel).filter_by(id=hotel_id).one()
+    category = session.query(Category).filter_by(id=category_id).one()
+    properties = session.query(Hotel).filter_by(category_id=category_id).all()
+    return render_template(
+        'hotel.html', hotel=hotel, category=category, properties=properties)
+
 
 # Create a new hotel
 @app.route('/categories/<category_id>/hotels/addhotel', methods=['GET', 'POST'])
 def addNewHotel(category_id):
     if 'username' not in login_session:
         return redirect('/login')
-    #all_categories = session.query(Category).all()
     category = session.query(Category).filter_by(id=category_id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorised to add hotels to this category. Please create a category to add hotels to it');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
+        prompt = ""
+        prompt += "<script>function myFunction()"
+        prompt += "{alert("
+        prompt += "'You are not authorised to add a hotel to this category."
+        prompt += "Please create your own category to add it.'"
+        prompt += ");"
+        prompt += "setTimeout(function() {window.location.href="
+        prompt += "'/'"
+        prompt += ";}, 200);}"
+        prompt += "</script><body onload="
+        prompt += "'myFunction()'"
+        prompt += ">"
+        return prompt
     if request.method == 'POST':
-        newHotel = Hotel(name = request.form['name'],
-                        description = request.form['description'],
-                        image = request.form['image_url'],
-                        category_id = category_id,
-                        location = request.form['location'],
-                        user_id=category.user_id)
+        newHotel = Hotel(name=request.form['name'],
+            description=request.form['description'],
+            image=request.form['image_url'], category_id=category_id,
+            location=request.form['location'], user_id=category.user_id)
         session.add(newHotel)
         session.commit()
         flash('You have added %s as a new hotel' % newHotel.name)
-        return redirect(url_for('showHotelDetails', category_id=category_id, hotel_id=newHotel.id))
+        return redirect(url_for(
+            'showHotelDetails', category_id=category_id, hotel_id=newHotel.id))
     else:
         return render_template('newhotel.html')
+
 
 # Edit a hotel
 @app.route('/hotels/<hotel_id>/edit', methods=['GET', 'POST'])
 def editHotel(hotel_id):
     if 'username' not in login_session:
         return redirect('/login')
-    hotel_to_edit = session.query(Hotel).filter_by(id = hotel_id).one()
+    hotel_to_edit = session.query(Hotel).filter_by(id=hotel_id).one()
     all_categories = session.query(Category).all()
-    category = session.query(Category).filter_by(id=hotel_to_edit.category.id).one()
+    category = session.query(Category).filter_by(
+        id=hotel_to_edit.category.id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorised to edit this hotel. Please add your own hotel before you can edit it.');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
+        prompt = ""
+        prompt += "<script>function myFunction()"
+        prompt += "{alert("
+        prompt += "'You are not authorised to edit this hotel."
+        prompt += "Please create your own hotel to edit it.'"
+        prompt += ");"
+        prompt += "setTimeout(function() {window.location.href="
+        prompt += "'/'"
+        prompt += ";}, 200);}"
+        prompt += "</script><body onload="
+        prompt += "'myFunction()'"
+        prompt += ">"
+        return prompt
 
     if request.method == 'POST':
         if request.form['name']:
@@ -321,9 +389,13 @@ def editHotel(hotel_id):
         session.add(hotel_to_edit)
         session.commit()
         flash('Successfully edited %s' % hotel_to_edit.name)
-        return redirect(url_for('showHotelDetails', category_id=hotel_to_edit.category.id, hotel_id=hotel_to_edit.id))
+        return redirect(url_for(
+            'showHotelDetails', category_id=hotel_to_edit.category.id,
+            hotel_id=hotel_to_edit.id))
     else:
-        return render_template('edithotel.html', hotel_to_edit=hotel_to_edit, all_categories=all_categories)
+        return render_template(
+            'edithotel.html', hotel_to_edit=hotel_to_edit,
+            all_categories=all_categories)
 
 
 # Delete a hotel
@@ -331,42 +403,60 @@ def editHotel(hotel_id):
 def deleteHotel(category_id, hotel_id):
     if 'username' not in login_session:
         return redirect('/login')
-    category = session.query(Category).filter_by(id = category_id).one()
-    hotel_to_delete = session.query(Hotel).filter_by(id = hotel_id).one()
+    category = session.query(Category).filter_by(id=category_id).one()
+    hotel_to_delete = session.query(Hotel).filter_by(id=hotel_id).one()
     if login_session['user_id'] != category.user_id:
-        return "<script>function myFunction() {alert('You are not authorised to delete this hotel.');setTimeout(function() {window.location.href='/';}, 500);}</script><body onload='myFunction()''>"
+        prompt = ""
+        prompt += "<script>function myFunction()"
+        prompt += "{alert("
+        prompt += "'You are not authorised to delete this hotel."
+        prompt += "Please create your own hotel to delete it.'"
+        prompt += ");"
+        prompt += "setTimeout(function() {window.location.href="
+        prompt += "'/'"
+        prompt += ";}, 200);}"
+        prompt += "</script><body onload="
+        prompt += "'myFunction()'"
+        prompt += ">"
+        return prompt
     if request.method == 'POST':
         session.delete(hotel_to_delete)
         session.commit()
         flash('You have successfully deleted %s' % hotel_to_delete.name)
-        return redirect(url_for('showCategoryDetails', category_id=category_id))
+        return redirect(url_for(
+            'showCategoryDetails', category_id=category_id))
     else:
-        return render_template('deletehotel.html', hotel_to_delete=hotel_to_delete)
+        return render_template(
+            'deletehotel.html', hotel_to_delete=hotel_to_delete)
+
 
 # JSON API Endpoints to view Category and Hotel info
 @app.route('/categories/JSON')
 def categoriesJSON():
     categories = session.query(Category).all()
-    return jsonify(categories = [c.serialize for c in categories])
+    return jsonify(categories=[c.serialize for c in categories])
+
 
 @app.route('/allhotels/JSON')
 def allhotelsJSON():
     all_hotels = session.query(Hotel).all()
-    return jsonify(all_hotels = [a.serialize for a in all_hotels])
+    return jsonify(all_hotels=[a.serialize for a in all_hotels])
+
 
 @app.route('/categories/<category_id>/hotels/JSON')
 def categorydetailJSON(category_id):
-    category = session.query(Category).filter_by(id = category_id).one()
-    hotels = session.query(Hotel).filter_by(category_id = category_id).all()
-    return jsonify(hotels = [h.serialize for h in hotels])
+    category = session.query(Category).filter_by(id=category_id).one()
+    hotels = session.query(Hotel).filter_by(category_id=category_id).all()
+    return jsonify(hotels=[h.serialize for h in hotels])
+
 
 @app.route('/categories/<int:category_id>/hotel/<int:hotel_id>/JSON')
 def hoteldetailJSON(category_id, hotel_id):
-    hotel = session.query(Hotel).filter_by(id = hotel_id).one()
-    return jsonify(hotel = hotel.serialize)
+    hotel = session.query(Hotel).filter_by(id=hotel_id).one()
+    return jsonify(hotel=hotel.serialize)
 
 
 if __name__ == '__main__':
     app.secret_key = 'something'
     app.debug = True
-    app.run(host = '0.0.0.0', port = 5000)
+    app.run(host='0.0.0.0', port=5000)
