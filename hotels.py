@@ -22,7 +22,7 @@ CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id
 APPLICATION_NAME = "Hotels App"
 
 # Connect to hotels database and create the database session
-engine = create_engine('sqlite:///hotels1.db')
+engine = create_engine('sqlite:///hotels2.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()

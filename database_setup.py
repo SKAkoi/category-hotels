@@ -17,7 +17,7 @@ class Category(Base):
     __tablename__ = 'category'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(250), nullable=False, primary_key=True)
+    name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
@@ -55,6 +55,6 @@ class Hotel(Base):
             'location' : self.location,
         }
 
-engine = create_engine('sqlite:///hotels1.db')
+engine = create_engine('sqlite:///hotels2.db')
 
 Base.metadata.create_all(engine)
