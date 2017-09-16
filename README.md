@@ -24,7 +24,7 @@ This project comes with JSON endpoints that allow you to query the database:
 1. All categories - http://localhost:5000/categories/JSON
 2. All hotels - http://localhost:5000/allhotels/JSON
 3. Hotels belonging to a specific category - http://localhost:5000/categories/category_id/hotels/JSON
-4. A specific hotel's info - http://localhost:5000/categories/int:category_id/hotel/int:hotel_id/JSON
+4. A specific hotel's info - http://localhost:5000/categories/category_id/hotel/hotel_id/JSON
 
 Note that category_id and hotel_id refer to specific id values that correspond to the
 category and hotel you are querying.
