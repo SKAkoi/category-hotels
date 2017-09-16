@@ -101,6 +101,10 @@ p {
   color: #ffffff;
 }
 
+#result {
+  color: #ffffff !important;
+}
+
 /* Begin styling for the category detail page (categorydetail.html) */
 .categorybuttons {
   text-align: center;

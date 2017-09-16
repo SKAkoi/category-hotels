@@ -16,9 +16,10 @@
             data-approvalprompt="force">
       </span>
     </div>
-  </div>
-  </div>
     <div id="result"></div>
+  </div>
+  </div>
+
 </div>
 <script>
   function signInCallback(authResult){
@@ -36,7 +37,7 @@
         data: authResult['code'],
         success: function(result) {
           if (result) {
-            $('#result').html('Login Successful!</br>' + result + 'redirecting...')
+            $('#result').html('Login Successful!</br> redirecting...')
             setTimeout(function() {
               window.location.href="/categories";
             }, 4000);
