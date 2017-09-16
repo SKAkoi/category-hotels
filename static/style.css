@@ -132,14 +132,29 @@ p {
   margin: 0 auto;
 }
 
-/* Styling for small screens */
-@media screen and (max-width:500px) {
+/* Styling for smaller screens */
+@media screen and (max-width:768px) {
+  .brand {
+    text-align: center;
+  }
+
+  .login-info {
+    position: relative;
+  }
+
+  .signedin-user {
+    display: block;
+    padding: 10px;
+    text-align: center;
+  }
+
   .category-list {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: scroll;
     width: 100%;
     white-space: nowrap;
+    padding: 20px;
   }
 
   .category-list p {
@@ -162,5 +177,15 @@ p {
     text-align: center;
     width: 320px;
     margin: 0 auto;
+  }
+
+  .hotel-list {
+    display: block;
+    text-align: center;
+    border-left: none;
+  }
+
+  .hotel-card {
+    width: 100%;
   }
 }
