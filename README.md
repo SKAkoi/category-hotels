@@ -21,10 +21,10 @@ providing user registration and authentication via Google (oauth2)
 
 ## Accessing data via the Category Hotels API
 This project comes with JSON endpoints that allow you to query the database:
-All categories - http://localhost:5000/categories/JSON
-All hotels - http://localhost:5000/allhotels/JSON
-Hotels belonging to a specific category - http://localhost:5000/categories/category_id/hotels/JSON
-A specific hotel's info - http://localhost:5000/categories/int:category_id/hotel/int:hotel_id/JSON
+** All categories - http://localhost:5000/categories/JSON
+** All hotels - http://localhost:5000/allhotels/JSON
+** Hotels belonging to a specific category - http://localhost:5000/categories/category_id/hotels/JSON
+** A specific hotel's info - http://localhost:5000/categories/int:category_id/hotel/int:hotel_id/JSON
 
 Note that category_id and hotel_id refer to specific id values that correspond to the
 category and hotel you are querying.
