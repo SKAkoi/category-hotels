@@ -164,7 +164,7 @@ p {
   .category-list p {
     display: inline;
     margin: 10px;
-    background-color: rgba(228, 241, 254, 0.15);
+    background-color: rgba(228, 241, 254, 0.35);
     border-radius: 25px;
     padding: 3px 10px 3px 10px;
   }

@@ -144,7 +144,7 @@ def glogout():
         response = make_response(json.dumps('Current user not connected'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print('In glogout access toekn is %s', access_token)
+    print('In glogout access token is %s', access_token)
     print('User name is: ')
     print(login_session['username'])
 
@@ -237,9 +237,9 @@ def addNewCategory():
 # Edit a category
 @app.route('/categories/<category_id>/edit', methods=['GET', 'POST'])
 def editCategory(category_id):
-    category_to_edit = session.query(Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
+    category_to_edit = session.query(Category).filter_by(id=category_id).one()
     if category_to_edit.user_id != login_session['user_id']:
         prompt = ""
         prompt += "<script>function myFunction()"
@@ -269,10 +269,10 @@ def editCategory(category_id):
 # Delete a category
 @app.route('/categories/<category_id>/delete', methods=['GET', 'POST'])
 def deleteCategory(category_id):
-    category_to_delete = session.query(Category).filter_by(
-        id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
+    category_to_delete = session.query(Category).filter_by(
+        id=category_id).one()
     if category_to_delete.user_id != login_session['user_id']:
         prompt = ""
         prompt += "<script>function myFunction()"
